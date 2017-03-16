@@ -1,9 +1,4 @@
----
-title: "PA1_template"
-output: 
-  html_document: 
-    keep_md: yes
----
+# PA1_template
 
 
 ## Peer-graded Assignment: Course Project 1
@@ -18,7 +13,8 @@ total of 17,568 observations in this dataset.
 
 
 Read the file:
-```{r act}
+
+```r
 act <- read.csv("activity.csv")
 ```
 
@@ -29,29 +25,49 @@ act <- read.csv("activity.csv")
 
 What is mean total number of steps taken per day?
 
-```{r aggregateAct}
+
+```r
 ## aggregate to get total steps per day
 totStepsDay <- aggregate(act$steps, list(act$date),sum, na.rm = TRUE)
 names(totStepsDay) <- c("date", "TStepsDay")
 paste("mean =", round(mean(totStepsDay$TStepsDay, na.rm = TRUE),2))
 ```
 
+```
+## [1] "mean = 9354.23"
+```
+
 
 For this part of the assignment, you can ignore the missing values in the 
 dataset.
 Make a histogram of the total number of steps taken each day.
-```{r histogramAct}
+
+```r
 ## check distribution with histogram - most are between 10 and 15k per day
 hist(totStepsDay$TStepsDay, main = "Number of Steps vs Number of Days", 
      breaks = 61, xlab = "Steps", ylab = "Days", ylim = c(0,15),
      xlim = c(0,22000))
 ```
 
+![](PA1_template_files/figure-html/histogramAct-1.png)<!-- -->
+
 Calculate and report the mean and median of the total number of steps taken per 
 day.
-```{r mean/medianAct}
+
+```r
 paste("mean =", round(mean(totStepsDay$TStepsDay, na.rm = TRUE),2))
+```
+
+```
+## [1] "mean = 9354.23"
+```
+
+```r
 paste("median =", round(median(totStepsDay$TStepsDay, na.rm = TRUE),2))
+```
+
+```
+## [1] "median = 10395"
 ```
 
 ###############################################################################
@@ -65,7 +81,8 @@ Which 5-minute interval, on average across all the days in the dataset
 contains the maximum number of steps?
 
 
-```{r dailyAct2}
+
+```r
 ## modifying db using new db called act2
 act2 <- act
 
@@ -82,16 +99,23 @@ plot(totStepsInt$interval,totStepsInt$TSteps, type = "l",
      main = "Average number of steps per 5 minute increments during the day")
 ```
 
+![](PA1_template_files/figure-html/dailyAct2-1.png)<!-- -->
+
 Which 5-minute interval, on average across all the days in the dataset 
 contains the maximum number of steps?
 
-```{r maxintAct2}
+
+```r
 paste("5 min interval with maximum steps occurs between", 
       totStepsInt$interval[which(totStepsInt$TSteps == 
                                          max(totStepsInt$TSteps))],
 "and",totStepsInt$interval[which(totStepsInt$TSteps == 
                                          max(totStepsInt$TSteps))]+5,
 "minute interval.")
+```
+
+```
+## [1] "5 min interval with maximum steps occurs between 835 and 840 minute interval."
 ```
 
 ################################################################################
@@ -110,12 +134,17 @@ calculations or summaries of the data.
 
 Calculate and report the total number of missing values in the dataset
 (i.e. the total number of rows with NAs)
-```{r NAsAct3}
+
+```r
 ## modifying db using new db called act3
 act3 <- act
 ## check the columns for missing values
 c(sum(is.na(act3$steps)),sum(is.na(act3$date)),
                                          sum(is.na(act3$interval)))
+```
+
+```
+## [1] 2304    0    0
 ```
 
 
@@ -131,7 +160,8 @@ missing data filled in.
 
 Strategy for NAs -> substitute them with the mean for that 5 minute interval
 
-```{r noNAsAct3}
+
+```r
 ## Create logical vector with the NA row indices
 NArows <- is.na(act3$steps)
 ## merge act3 with the mean interval data frame totStepsInt (by interval)
@@ -159,7 +189,8 @@ newAct <- newAct[,c("steps","date", "interval")]
 
 Make a histogram of the total number of steps taken each day and Calculate
 and report the mean and median total number of steps taken per day.
-```{r histogramAct3}
+
+```r
 ## aggregate to get total steps per day
 totStepsDayClean <- aggregate(newAct$steps, list(newAct$date),sum, 
                               na.rm = TRUE)
@@ -171,17 +202,32 @@ hist(totStepsDayClean$TStepsDayClean,
      xlim = c(0,22000))
 ```
 
+![](PA1_template_files/figure-html/histogramAct3-1.png)<!-- -->
 
-```{r mean/medianAct3}
+
+
+```r
 paste("mean =", round(mean(totStepsDayClean$TStepsDayClean, na.rm = TRUE),2))
+```
+
+```
+## [1] "mean = 10765.64"
+```
+
+```r
 paste("median =", round(median(totStepsDayClean$TStepsDayClean, 
                                na.rm = TRUE),2))
+```
+
+```
+## [1] "median = 10762"
 ```
 
 Do these values differ from the estimates from the first part of the
 assignment? What is the impact of imputing missing data on the estimates
 of the total daily number of steps?
-```{r compareAct3}
+
+```r
 par(mfrow=c(1,2))
 hist(totStepsDay$TStepsDay, main = "Steps vs Days", 
      breaks = 61, xlab = "Steps", ylab = "Days", ylim = c(0,15),
@@ -190,6 +236,8 @@ hist(totStepsDayClean$TStepsDayClean, main = "Steps vs Days (NA substitution)",
      breaks = 61, xlab = "Steps", ylab = "Days", ylim = c(0,15),
      xlim = c(0,22000))
 ```
+
+![](PA1_template_files/figure-html/compareAct3-1.png)<!-- -->
 
 NA value substitution contributes to the mean. 
 It also cut down on zero values as many NA's were on dates that had zero values 
@@ -205,7 +253,8 @@ Use the dataset with the filled-in missing values for this part.
 Create a new factor variable in the dataset with two levels - "weekday"
 and "weekend" indicating whether a given date is a weekday or weekend day.
 
-```{r daytypeNewAct2}
+
+```r
 # Will modify no NA df newAct
 newAct2 <- newAct
 ## change date to Date type to use weekday() function
@@ -232,7 +281,8 @@ newAct2$dayType <- as.factor(newAct2$dayType)
 Make a panel plot containing a time series plot (i.e. type = "l")
 of the 5-minute interval (x-axis) and the average number of steps taken,
 averaged across all weekday days or weekend days (y-axis).
-```{r aggregateplotNewAct2}
+
+```r
 byDayType <- aggregate(newAct2$steps, list(newAct2$dayType,newAct2$interval), 
                        mean, na.rm = TRUE)
 names(byDayType) <- c("dayType", "interval", "steps")
@@ -250,6 +300,8 @@ plot(byWeekday$interval,byWeekday$steps, type = "l",
      xlab =  "Intervals (5 min increments)", ylab = "Number of steps", 
      main = "Weekday average", ylim = c(0,240), col = "blue")
 ```
+
+![](PA1_template_files/figure-html/aggregateplotNewAct2-1.png)<!-- -->
 
 
 
